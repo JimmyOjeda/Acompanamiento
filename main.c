@@ -22,7 +22,7 @@ typedef struct{
 }lista;
 
 int createActivity(lista *list,act p);
-int updateActivity(lista *list,int auxForNotRepeat);
+int updateActivity(lista *list,int auxForNotRepeat,char newTittle[],char newPriority[]);
 int deleteActivity(lista *list,int auxForNotRepeat);
 int findById(lista *list,int idToFind);
 void printList(lista list);
@@ -76,6 +76,7 @@ int main()
 
 	//Se declara el struct de tipo lista llamado list
 	lista list;
+	list.index=0;
 
 	//Se generan las 10 actividades ya declaradas
 	createActivity(&list,actividad1);
@@ -107,11 +108,22 @@ int main()
 		}else if (opcion == 2){
 			system("cls");
 			int idToFind;
+			char newTittle[20];
+			char newPriority[5];
 			printf("Ingresa el id de la actividad a actualizar:\n");
 			scanf("%d",&idToFind);
 			int auxForNotRepeat=findById(&list,idToFind);
-			if (updateActivity(&list,auxForNotRepeat)==1){
+			if (auxForNotRepeat!=-1){
+				printf("---Vamos a actualizar la actividad %d--- \n",list.actividad[auxForNotRepeat].id);
+	      printf("Ingresa el nuevo titulo de la actividad: \n");
+	      scanf("%s",newTittle);
+	      printf("Ingresa la nueva prioridad de la actividad: \n");
+	      scanf("%s",newPriority);
+			}
+			if (updateActivity(&list,auxForNotRepeat,newTittle,newPriority)==1){
 				printf("La actividad se actualizo con exito \n");
+			}else {
+      	printf("No se encontro una actividad con ese id \n");
 			}
 		}else if (opcion == 3){
 			system("cls");
@@ -120,11 +132,11 @@ int main()
 			scanf("%d",&idToFind);
 			int auxForNotRepeat=findById(&list,idToFind);
 			if (deleteActivity(&list,auxForNotRepeat)==1){
-                printf("La actividad con este id es la actividad %d \n",auxForNotRepeat+1);
-                printf("Procedo a eliminar la actividad \n");
+      	printf("La actividad con este id es la actividad %d \n",auxForNotRepeat+1);
+      	printf("Procedo a eliminar la actividad \n");
 				printf("La actividad se elimino con exito \n");
 			}else{
-                printf("No se encontro una actividad con ese id \n");
+      	printf("No se encontro una actividad con ese id \n");
 			}
 		}
 	}
@@ -136,19 +148,11 @@ int createActivity(lista *list,act p){
 	list->index++;
 }
 
-int updateActivity(lista *list,int auxForNotRepeat){
+int updateActivity(lista *list,int auxForNotRepeat,char newTittle[],char newPriority[]){
 	int flagUpdate=0;
 	if (auxForNotRepeat!=-1){
-		printf("---Vamos a actualizar la actividad %d--- \n",auxForNotRepeat+1);
-		printf("Ingresa el nuevo titulo de la actividad: \n");
-		char newTittle[20];
-		scanf("%s",newTittle);
 		strcpy(list->actividad[auxForNotRepeat].titulo,newTittle);
-		printf("Ingresa la nueva prioridad de la actividad: \n");
-		char newPriority[5];
-		scanf("%s",newPriority);
 		strcpy(list->actividad[auxForNotRepeat].prioridad,newPriority);
-
 		flagUpdate=1;
 	}
 	return flagUpdate;
@@ -158,8 +162,9 @@ int deleteActivity(lista *list,int auxForNotRepeat){
 	int flagDelete=0,i;
 	if (auxForNotRepeat!=-1){
 		for (i=auxForNotRepeat;i<list->index;i++){
-            list->actividad[i] = list->actividad[+1] ;
+            list->actividad[i] = list->actividad[i+1] ;
 		}
+		list->index--;
 		flagDelete=1;
 	}
 	return flagDelete;
@@ -182,11 +187,11 @@ void printList(lista list){
 	printf("%s",outputFromList);
 }
 
-char* dateInicioToString(fecha *d){
+char* dateToString(fecha *d){
 	char output[10]=" ";
 	char auxDia[3];
 	char auxMes[3];
-	char auxAnyo[3];
+	char auxAnyo[5];
 
 	//Se hace una string con la fecha de inicio
 	char sentenceStart[10]=" ";
@@ -203,32 +208,12 @@ char* dateInicioToString(fecha *d){
 	return output;
 }
 
-char* dateFinToString(fecha *d){
-	char output[10]=" ";
-	char auxDia[3];
-	char auxMes[3];
-	char auxAnyo[3];
-	//Se hace una string con la fecha de fin
-	char sentenceEnd[10]=" ";
-	sprintf(auxDia,"%d",d->dia);
-	strcat(sentenceEnd,auxDia);
-	strcat(sentenceEnd,"/");
-	sprintf(auxMes,"%d",d->mes);
-	strcat(sentenceEnd,auxMes);
-	strcat(sentenceEnd,"/");
-	sprintf(auxAnyo,"%d",d->anyo);
-	strcat(sentenceEnd,auxAnyo);
-    strcat(output,sentenceEnd);
-
-	return output;
-}
-
 char* activityToString(act *acti){
 	char output[800]={"---ACTIVIDAD "};
 	char auxForAll[6];
-	char outputFromDate[10]=" ";
+	char outputFromDate[12]=" ";
 
-	sprintf(auxForAll,"%d",acti->id+1);
+	sprintf(auxForAll,"%d",acti->id);
 	strcat(output,auxForAll);
 	strcat(output,"---\nEl id de la actividad es: ");
 	sprintf(auxForAll,"%d",acti->id);
@@ -237,11 +222,11 @@ char* activityToString(act *acti){
 	strcat(output,acti->titulo);
 	strcat(output,"\nLa prioridad de la actividad es: ");
 	strcat(output,acti->prioridad);
-	strcat(output,"\nLa fecha de inicio de la actividad es: ");
-	strcpy(outputFromDate,dateInicioToString(&acti->fechaInicio));
+	strcat(output,"\nLa fecha de inicio de la actividad es:");
+	strcpy(outputFromDate,dateToString(&acti->fechaInicio));
 	strcat(output,outputFromDate);
-	strcat(output,"\nLa fecha de fin de la actividad es: ");
-	strcpy(outputFromDate,dateFinToString(&acti->fechaFin));
+	strcat(output,"\nLa fecha de fin de la actividad es:");
+	strcpy(outputFromDate,dateToString(&acti->fechaFin));
 	strcat(output,outputFromDate);
 	strcat(output,"\n");
 	return output;
