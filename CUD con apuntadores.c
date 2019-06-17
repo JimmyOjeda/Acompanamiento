@@ -32,6 +32,8 @@ char* dateFinToString(fecha *d);
 char* activityToString(act *acti);
 char* listToString(lista *list);
 
+void ordenarLista(lista *list,act actividadesOrdenadas[]);
+
 int main()
 {
 	//Se declaran las actividades
@@ -79,6 +81,35 @@ int main()
 	lista list;
 	list.index=0;
 	
+	act *actividadesOrdenadas[10];
+	
+	//Se reserva memoria para las actividades ordenadas
+	act *actividadOrdenada1=(act*)malloc(sizeof(act));
+	act *actividadOrdenada2=(act*)malloc(sizeof(act));
+	act *actividadOrdenada3=(act*)malloc(sizeof(act));
+	act *actividadOrdenada4=(act*)malloc(sizeof(act));
+	act *actividadOrdenada5=(act*)malloc(sizeof(act));
+	act *actividadOrdenada6=(act*)malloc(sizeof(act));
+	act *actividadOrdenada7=(act*)malloc(sizeof(act));
+	act *actividadOrdenada8=(act*)malloc(sizeof(act));
+	act *actividadOrdenada9=(act*)malloc(sizeof(act));
+	act *actividadOrdenada10=(act*)malloc(sizeof(act));
+	
+	//Enlazo los apuntadores de mi vector con los obtenidos con malloc
+	enlazarActividadesOrdenadas(actividadesOrdenadas[0],actividadOrdenada1);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[1],actividadOrdenada2);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[2],actividadOrdenada3);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[3],actividadOrdenada4);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[4],actividadOrdenada5);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[5],actividadOrdenada6);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[6],actividadOrdenada7);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[7],actividadOrdenada8);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[8],actividadOrdenada9);
+	enlazarActividadesOrdenadas(actividadesOrdenadas[9],actividadOrdenada10);
+	/*printf("El valor es: %d \n \n",actividadOrdenada1);
+	printf("El valor es: %d \n \n",actividadOrdenada2);
+	printf("El valor es: %d \n \n",actividadOrdenada3);*/
+	
 	//Se reserva memoria para las actividades
 	act *actividad1=(act*)malloc(sizeof(act));
 	act *actividad2=(act*)malloc(sizeof(act));
@@ -117,13 +148,14 @@ int main()
 	//Se ejecuta un menu
 	int opcion=0;
 	printf("Todas las actividades (10) se generaron exitosamente\n");
-	while (opcion!=4){
+	while (opcion!=5){
 		int i;
 		printf("\nIngresa una opcion del menu \n");
 		printf("Opcion 1. Mostrar actividades \n");
 		printf("Opcion 2. Modificar actividad \n");
 		printf("Opcion 3. Eliminar actividades \n");
-		printf("Opcion 4. Salir \n");
+		printf("Opcion 4. Ordenar actividades \n");
+		printf("Opcion 5. Salir \n");
 		scanf("%d",&opcion);
 		if (opcion == 1){
 			system("cls");
@@ -182,6 +214,10 @@ int main()
 			}else{
       			printf("No se encontro una actividad con ese id \n");
 			}
+		}else if (opcion == 4){
+			ordenarLista(&list,actividadesOrdenadas);
+			printf("Se ordenaron las actividades");
+			//printf("El id de la actividad mas proxima es: ",actividadesOrdenadas[0]->id);
 		}
 	}
 	
@@ -196,7 +232,63 @@ int main()
 	free(actividad9);
 	free(actividad10);
 	
+	free(actividadOrdenada1);
+	free(actividadOrdenada2);
+	free(actividadOrdenada3);
+	free(actividadOrdenada4);
+	free(actividadOrdenada5);
+	free(actividadOrdenada6);
+	free(actividadOrdenada7);
+	free(actividadOrdenada8);
+	free(actividadOrdenada9);
+	free(actividadOrdenada10);
+	
 	return 0;
+}
+
+void ordenarLista(lista *list,act actividadesOrdenadas[]){
+	int n=10;
+	//Se convierten las fechas de las actividades a enteros comparables
+	int fechaAct[n];
+	
+	fechaAct[0]=(list->actividades[0]->fechaInicio.dia+list->actividades[0]->fechaInicio.mes+list->actividades[0]->fechaInicio.anyo);
+	fechaAct[1]=(list->actividades[1]->fechaInicio.dia+list->actividades[1]->fechaInicio.mes+list->actividades[1]->fechaInicio.anyo);
+	fechaAct[2]=(list->actividades[2]->fechaInicio.dia+list->actividades[2]->fechaInicio.mes+list->actividades[2]->fechaInicio.anyo);
+	fechaAct[3]=(list->actividades[3]->fechaInicio.dia+list->actividades[3]->fechaInicio.mes+list->actividades[3]->fechaInicio.anyo);
+	fechaAct[4]=(list->actividades[4]->fechaInicio.dia+list->actividades[4]->fechaInicio.mes+list->actividades[4]->fechaInicio.anyo);
+	fechaAct[5]=(list->actividades[5]->fechaInicio.dia+list->actividades[5]->fechaInicio.mes+list->actividades[5]->fechaInicio.anyo);
+	fechaAct[6]=(list->actividades[6]->fechaInicio.dia+list->actividades[6]->fechaInicio.mes+list->actividades[6]->fechaInicio.anyo);
+	fechaAct[7]=(list->actividades[7]->fechaInicio.dia+list->actividades[7]->fechaInicio.mes+list->actividades[7]->fechaInicio.anyo);
+	fechaAct[8]=(list->actividades[8]->fechaInicio.dia+list->actividades[8]->fechaInicio.mes+list->actividades[8]->fechaInicio.anyo);
+	fechaAct[9]=(list->actividades[9]->fechaInicio.dia+list->actividades[9]->fechaInicio.mes+list->actividades[9]->fechaInicio.anyo);
+	
+	int i,j,aux;
+	act auxAct;
+	
+	for (i=0;i<n;i++){
+		printf("Aqui llega\n");
+		actividadesOrdenadas[i]=*list->actividades[i];
+		printf("El id de la actividadOrd %d: %d \n",i+1,actividadesOrdenadas[i].id);
+	}
+	
+	
+	for (i=0;i<n;i++) {
+		for (j=0;j<n-i;j++) {
+			if (fechaAct[j]>=fechaAct[j+1]){
+				aux=fechaAct[j]; 
+				fechaAct[j]=fechaAct[j+1]; 
+				fechaAct[j+1]=aux;
+				auxAct=actividadesOrdenadas[j]; 
+				actividadesOrdenadas[j]=actividadesOrdenadas[j+1]; 
+				actividadesOrdenadas[j+1]=auxAct;
+			}
+			
+		}
+	}
+}
+
+void enlazarActividadesOrdenadas(act *actividadesOrdenadas,act *actividadVacia){
+	actividadesOrdenadas=actividadVacia;
 }
 
 int rellenarActividad(lista *list,act *actividadVacia){
@@ -211,7 +303,7 @@ int createActivity(lista *list,act *actividadVacia){
 
 int updateActivity(lista *list,int *positionFound,act *newAct){
 	int flagUpdate=0;
-	if (positionFound!=-1){
+	if (*positionFound!=-1){
 		*list->actividades[*positionFound]=*newAct;
 		flagUpdate=1;
 	}
@@ -220,10 +312,11 @@ int updateActivity(lista *list,int *positionFound,act *newAct){
 
 int deleteActivity(lista *list,int *positionFound){
 	int flagDelete=0,i;
-	if (positionFound!=-1){
-		for (i=positionFound;i<list->index;i++){
+	if (*positionFound!=-1){
+		for (i=*positionFound;i<list->index;i++){
             list->actividades[i] = list->actividades[i+1] ;
 		}
+		
 		list->index--;
 		flagDelete=1;
 	}
