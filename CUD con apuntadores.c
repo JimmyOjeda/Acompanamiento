@@ -23,9 +23,9 @@ typedef struct{
 
 int rellenarActividad(lista *list,act *actividadVacia);
 int createActivity(lista *list,act *actividadVacia);
-int updateActivity(lista *list,int auxForNotRepeat,char newTittle[],char newPriority[]);
-int deleteActivity(lista *list,int auxForNotRepeat);
-int findById(lista *list,int idToFind);
+int updateActivity(lista *list,int *positionFound,act *newAct);
+int deleteActivity(lista *list,int *positionFound);
+int findById(lista *list,int *idToFind);
 void printList(lista *list);
 char* dateInicioToString(fecha *d);
 char* dateFinToString(fecha *d);
@@ -130,20 +130,41 @@ int main()
 			printList(&list);
 		}else if (opcion == 2){
 			system("cls");
-			int idToFind;
+			int idToFind,newDayI,newMonthI,newYearI,newDayF,newMonthF,newYearF;
 			char newTittle[20];
 			char newPriority[5];
+			act newAct;
 			printf("Ingresa el id de la actividad a actualizar:\n");
 			scanf("%d",&idToFind);
-			int auxForNotRepeat=findById(&list,idToFind);
-			if (auxForNotRepeat!=-1){
-				printf("---Vamos a actualizar la actividad %d--- \n",list.actividades[auxForNotRepeat]->id);
+			int positionFound=findById(&list,&idToFind);
+			if (positionFound!=-1){
+				printf("---Vamos a actualizar la actividad %d--- \n",list.actividades[positionFound]->id);
 	      		printf("Ingresa el nuevo titulo de la actividad: \n");
 	   			scanf("%s",newTittle);
 				printf("Ingresa la nueva prioridad de la actividad: \n");
 	    		scanf("%s",newPriority);
+	    		printf("Ingresa la nueva fecha de inicio de la actividad: \n");
+	    		printf("Ingresa dia, mes y anio (ingresa y presiona enter) en ese orden \n");
+	    		scanf("%d",&newDayI);
+	    		scanf("%d",&newMonthI);
+	    		scanf("%d",&newYearI);
+	    		printf("Ingresa la nueva fecha de inicio de la actividad: \n");
+	    		printf("Ingresa dia, mes y anio (ingresa y presiona enter) en ese orden \n");
+	    		scanf("%d",&newDayF);
+	    		scanf("%d",&newMonthF);
+	    		scanf("%d",&newYearF);
+	    		//Asignacion de valores
+	    		newAct.id=idToFind;
+	    		strcpy(newAct.titulo,newTittle);
+	    		strcpy(newAct.prioridad,newPriority);
+	    		newAct.fechaInicio.dia=newDayI;
+	    		newAct.fechaInicio.mes=newMonthI;
+	    		newAct.fechaInicio.anyo=newYearI;
+	    		newAct.fechaFin.dia=newDayF;
+	    		newAct.fechaFin.mes=newMonthF;
+	    		newAct.fechaFin.anyo=newYearF;
 			}
-			if (updateActivity(&list,auxForNotRepeat,newTittle,newPriority)==1){
+			if (updateActivity(&list,&positionFound,&newAct)==1){
 				printf("La actividad se actualizo con exito \n");
 			}else {
       			printf("No se encontro una actividad con ese id \n");
@@ -153,13 +174,13 @@ int main()
 			int idToFind;
 			printf("Ingresa el id de la actividad a eliminar: \n");
 			scanf("%d",&idToFind);
-			int auxForNotRepeat=findById(&list,idToFind);
-			if (deleteActivity(&list,auxForNotRepeat)==1){
-      	printf("La actividad con este id es la actividad %d \n",auxForNotRepeat+1);
-      	printf("Procedo a eliminar la actividad \n");
+			int positionFound=findById(&list,&idToFind);
+			if (deleteActivity(&list,&positionFound)==1){
+      			printf("La actividad con este id es la actividad %d \n",positionFound+1);
+      			printf("Procedo a eliminar la actividad \n");
 				printf("La actividad se elimino con exito \n");
 			}else{
-      	printf("No se encontro una actividad con ese id \n");
+      			printf("No se encontro una actividad con ese id \n");
 			}
 		}
 	}
@@ -188,20 +209,19 @@ int createActivity(lista *list,act *actividadVacia){
 	list->index++;
 }
 
-int updateActivity(lista *list,int auxForNotRepeat,char newTittle[],char newPriority[]){
+int updateActivity(lista *list,int *positionFound,act *newAct){
 	int flagUpdate=0;
-	if (auxForNotRepeat!=-1){
-		strcpy(list->actividades[auxForNotRepeat]->titulo,newTittle);
-		strcpy(list->actividades[auxForNotRepeat]->prioridad,newPriority);
+	if (positionFound!=-1){
+		*list->actividades[*positionFound]=*newAct;
 		flagUpdate=1;
 	}
 	return flagUpdate;
 }
 
-int deleteActivity(lista *list,int auxForNotRepeat){
+int deleteActivity(lista *list,int *positionFound){
 	int flagDelete=0,i;
-	if (auxForNotRepeat!=-1){
-		for (i=auxForNotRepeat;i<list->index;i++){
+	if (positionFound!=-1){
+		for (i=positionFound;i<list->index;i++){
             list->actividades[i] = list->actividades[i+1] ;
 		}
 		list->index--;
@@ -210,10 +230,10 @@ int deleteActivity(lista *list,int auxForNotRepeat){
 	return flagDelete;
 }
 
-int findById(lista *list,int idToFind){
+int findById(lista *list,int *idToFind){
 	int i,idFound=-1;
 	for (i=0;i<10;i++){
-		if (list->actividades[i]->id==idToFind){
+		if (list->actividades[i]->id==*idToFind){
 			idFound=i;
 			break;
 		}
