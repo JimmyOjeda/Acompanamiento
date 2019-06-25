@@ -38,7 +38,7 @@ int main()
 	//Se hace un vector que guarde las direcciones de los malloc para hacerles free al final
 	struct nodo *frees[10];
 	
-	//Se hacen las 10 actividades de prueba
+	//Se hacen las 10 actividades
 	act actividades[10];
 	int i;
 	for (i=0;i<10;i++){
@@ -48,7 +48,7 @@ int main()
 		actividades[i].fechaInicio.dia=20+i;
 		actividades[i].fechaInicio.mes=10;
 		actividades[i].fechaInicio.anyo=2019;
-		actividades[i].fechaFin.dia=10+i;
+		actividades[i].fechaFin.dia=10-i;
 		actividades[i].fechaFin.mes=10;
 		actividades[i].fechaFin.anyo=2019;
 	}
@@ -59,9 +59,18 @@ int main()
 		counterAux=counterAux+agregarNodo(&list,&actividades[i],&frees[i]);
 	}
 	if (counterAux==10){
-		printf("Las (10) actividades se generaron con exito");
+		printf("Las (10) actividades se generaron con exito\n");
 	}else {
-		printf("No hubo espacio suficiente para generar algunas actividades");
+		printf("No hubo espacio suficiente para generar algunas actividades\n");
+	}
+	
+	//Se hace un vector donde se ordenaran las actividades segun su fecha de inicio
+	act *actividadesOrdenadas[10];
+	struct nodo *indice;
+	counterAux=0;
+	for (indice=list.cabezaLista;indice!=NULL;indice=indice->siguiente){
+		actividadesOrdenadas[counterAux]=&indice->actividad;
+		counterAux++;
 	}
 	
 	//Se ejecuta un menu
@@ -128,18 +137,16 @@ int main()
 				printf("La actividad con este id es la actividad %d \n",positionFound->actividad.id);
 			}
 			if (deleteActivity(&list,positionFound)==1){
-      			
-      			printf("Procedo a eliminar la actividad \n");
 				printf("La actividad se elimino con exito \n");
 			}else{
       			printf("No se encontro una actividad con ese id \n");
 			}
-		}/*else if (opcion == 4){
+		}else if (opcion == 4){
 			system("cls");
 			ordenarLista(&list,actividadesOrdenadas);
-			printList(&list,actividadesOrdenadas);
-			printf("Se imprimieron ordenadamente las actividades (Ascendente por fecha)");
-		}*/
+			printListOrdenada(&list,actividadesOrdenadas);
+			printf("Se imprimieron ordenadamente las actividades (Ascendente por fecha)\n");
+		}
 	}
 	
 	
@@ -291,4 +298,48 @@ int deleteActivity(lista *list,struct nodo *positionFound){
 	return flagDelete;
 }
 
+void ordenarLista(lista *list,act *actividadesOrdenadas[]){
+	int n=list->index;
+	int i,j,aux;
+	
+	//Se convierten las fechas de las actividades a enteros comparables
+	int fechaAct[n];
+	//Se obtienen las fechas de las actividades del segundo vector
+	for (i=0;i<n;i++){
+		fechaAct[i]=(actividadesOrdenadas[i]->fechaInicio.dia+actividadesOrdenadas[i]->fechaInicio.mes*(actividadesOrdenadas[i]->fechaInicio.anyo));
+	}
+	
+	int auxAct;
+	for (i=0;i<10;i++) {
+		for (j=0;j<10-i;j++) {
+			if (fechaAct[j]<fechaAct[j+1]){
+				//Hace burbuja al vector que contiene un valor en relacion a la fecha de la actividad
+				aux=fechaAct[j]; 
+				fechaAct[j]=fechaAct[j+1]; 
+				fechaAct[j+1]=aux;
+				//Si hace burbuja a los elementos del vector de las fechas
+				//Tambien lo hara en el vector de las actividades a ordenar
+				auxAct=actividadesOrdenadas[j];
+				actividadesOrdenadas[j]=actividadesOrdenadas[j+1];
+				actividadesOrdenadas[j+1]=auxAct;
+				printf("Entra al for \n");
+			}
+		}
+	}
+}
+
+char* listToStringOrdenada(lista *list,act *actividades[]){
+	int i;
+	char output[8000]=" ";
+	for (i=0;i<list->index;i++){
+        strcat(output,activityToString(actividades[i]));
+	}
+	return output;
+}
+
+void printListOrdenada(lista *list,act *actividades[]){
+	char outputFromList[8000]=" ";
+	strcpy(outputFromList,listToStringOrdenada(list,actividades));
+	printf("%s",outputFromList);
+}
 
