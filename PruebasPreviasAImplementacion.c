@@ -714,7 +714,7 @@ int compareDuration(date *sDate1,date *eDate1,date *sDate2,date *eDate2){
 
 //Hace comparaciones entre las duraciones de las actividades
 //y reordena el vector recibido (otro vector para ordenar por duracion)
-//de forma ascendente (por duracion) con un ordenamiento burbuja 
+//de forma ascendente (por duracion) con un ordenamiento burbuja
 void sortDurationList(lista *list,act **durationSortedActivities){
 	int n=list->index;
 	int i,j;
